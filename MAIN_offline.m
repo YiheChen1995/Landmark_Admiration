@@ -4,10 +4,12 @@ dbstop if error
 
 addpath('utils/functions')
 addpath('utils/classes')
+addpath('utils/constraints/')
 addpath('data/')
 
-test_new_landmarks = [7,10; 5,-23];
-for map_i= 10:10
+
+ 
+for map_i= 10:10 
     
 % seed the randomness
 rng(map_i)

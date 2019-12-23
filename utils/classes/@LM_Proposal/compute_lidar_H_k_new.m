@@ -7,7 +7,7 @@ spsi= sin(estimator.x_true(3));
 cpsi= cos(estimator.x_true(3));
 
 % number of expected extracted landmarks
-obj.LMP_n_L_k= length(new_landmarks);
+obj.LMP_n_L_k= size(new_landmarks,1);
 
 % number of expected measurements
 obj.LMP_n_k= obj.LMP_n_L_k * params.m_F;

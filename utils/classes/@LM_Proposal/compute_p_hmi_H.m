@@ -9,9 +9,9 @@ else
     obj.compute_B_matrix_fg( fault_ind , params.m_F );
 end
 
-LMP_Gamma_fg_j= obj.A_aug' * obj.B_j' * obj.B_j * obj.A_aug;
+LMP_Lambda_h_j= obj.A_aug' * obj.B_j' * obj.B_j * obj.A_aug;
 
-LMP_sigma_hat_j = sqrt( alpha' / LMP_Gamma_fg_j * alpha );
+LMP_sigma_hat_j = sqrt( alpha' / LMP_Lambda_h_j * alpha );
 
 LMP_sigma_hat_delta_j= sqrt( LMP_sigma_hat_j^2 - obj.LMP_sigma_hat^2 );
 

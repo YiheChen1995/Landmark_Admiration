@@ -105,8 +105,8 @@ if  ( params.SWITCH_FIXED_LM_SIZE_PH &&...
 end
 
 if (obj.p_hmi<=1e-7)
-          test_new_landmarks = [7,10; 5,-23];
-          lm_prop = LM_Proposal(obj,params,estimator,test_new_landmarks);
+          lm_prop = LM_Proposal(obj,params,estimator,0);
+          lm_prop.DBG_new_landmarks = [7,10; 5,-23];
 end
 % update the preceding horizon
 update_preceding_horizon(obj, estimator)
