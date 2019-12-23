@@ -51,8 +51,8 @@ while ~estimator.goal_is_reached && epoch <= params.num_epochs_sim
      end
      
       %if (im.p_hmi<=1e-7)
-      %    lm_prop = LM_Proposal(im,params,estimator,test_new_landmarks);
-      %end
+          lm_prop = LM_Proposal(im,params,estimator,test_new_landmarks);
+      end
       
     %end
     % -----------------------------------------

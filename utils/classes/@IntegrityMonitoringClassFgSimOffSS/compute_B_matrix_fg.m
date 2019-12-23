@@ -2,17 +2,21 @@
 function compute_B_matrix_fg(obj, i, m_F)
 
 %initialize faulted msmts indices vector
-ind_faulted_msmts= zeros( m_F , 1 );
+ind_faulted_msmts= zeros( length(i)*m_F , 1 );
 
-ind_faulted_msmts( 1: m_F ) = obj.LM_abs_msmt_ind(:,i);
+for j = 1 : length( i )
+    
+    ind_faulted_msmts( m_F*(j-1)+1: m_F*j ) = obj.abs_msmt_ind(:,i(j));
+    
+end
 
 
 % build the fault-free msmts extraction matrix
-obj.B_j = zeros( obj.LM_n_total-obj.m-m_F , obj.LM_n_total );
+obj.B_j = zeros( obj.n_total-obj.m-(m_F*length(i)) , obj.n_total );
 
 tmp=1;
 
-for j = (obj.m+1):obj.LM_n_total
+for j = (obj.m+1):obj.n_total
 
     if sum(ind_faulted_msmts==j) == 1
 

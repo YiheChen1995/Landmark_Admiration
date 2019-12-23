@@ -104,6 +104,10 @@ if  ( params.SWITCH_FIXED_LM_SIZE_PH &&...
     data.store_integrity_data(obj, estimator, counters, params) 
 end
 
+if (obj.p_hmi<=1e-7)
+          test_new_landmarks = [7,10; 5,-23];
+          lm_prop = LM_Proposal(obj,params,estimator,test_new_landmarks);
+end
 % update the preceding horizon
 update_preceding_horizon(obj, estimator)
 

@@ -36,7 +36,7 @@ classdef LM_Proposal < handle
                  %obj.compute_required_epochs_for_min_LMs(params, estimator,new_landmarks); 
                   % number of absolute msmts over the horizon
                  obj.C_req= params.continuity_requirement;
-                 obj.LM_abs_msmt_ind = im.LM_abs_msmt_ind;
+                 obj.LMP_abs_msmt_ind = im.abs_msmt_ind;
                  obj.m= im.m;
                  obj.LMP_n_M= estimator.n_k + size(new_landmarks,1)*params.m_F + sum( im.n_ph(1:obj.M - 1) );
                   % number of landmarks over the horizon
@@ -88,7 +88,7 @@ classdef LM_Proposal < handle
                  compute_lidar_H_k_new(obj,estimator, params, new_landmarks);
                  A_old = im.A;
                  obj.LMP_V = kron( eye(num_lm_prp) , params.sqrt_inv_R_lidar );
-                 A_new = obj.LMP_V*obj.LMP_H_k_new;
+                 A_new = [zeros(size(new_landmarks,1)*params.m_F,size(A_old,2)-obj.m),obj.LMP_V*obj.LMP_H_k_new];
                  A_aug = [A_old;A_new];
              end
          end
