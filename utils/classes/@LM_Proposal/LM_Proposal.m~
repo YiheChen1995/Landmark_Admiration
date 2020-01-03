@@ -43,25 +43,37 @@ classdef LM_Proposal < handle
                  p_phmi = calculate_phmi_pseudo(obj,im,params,estimator,obj.DBG_new_landmarks)
               else
                 %%  ---------under costruction------------
-                 cstn_num = 1
+                 cstn_num = 2 %%for construction variable
                  CTRL_MAX_Landmarks = cstn_num
                  for lm_i = 1:CTRL_MAX_Landmarks % try different landmark number until it reaches the max
                     % construct the initial condition
                      new_landmarks_0 = [];
                      for x0_i = 1:lm_i
-                         new_landmarks_0 = [new_landmarks_0; estimator.x_true(1),estimator.x_true(2)]
+                         rand_dir=(rand*2)-1;
+                         new_landmarks_0 = [new_landmarks_0; estimator.x_true(1)+(params.lidarRange-2)*cos(2*pi*x0_i/lm_i+rand_dir*pi),estimator.x_true(2)+(params.lidarRange-2)*sin(2*pi*x0_i/lm_i+rand_dir*pi)]
                      end
-                    % setup constraints
-                     %tmp_loc = [0,0];
-                     %tmp_lm = [0,0;1,1;5,5];
-                     %cst = constraint_in_detection_range(tmp_loc,tmp_lm)
                      
-                    %opt
-                     [new_landmark_return,ps_phmi_out] = fmincon(@(new_landmarks) calculate_phmi_pseudo(obj,im,params,estimator));
+                    %opt====!!!IMPORTANT!!!===============================
+                     para_x0 = new_landmarks_0;
+                     para_A = [];
+                     para_b = [];
+                     para_Aeq = [];
+                     para_beq = [];
+                     para_lb = [];
+                     para_ub = [];
 
-                 end
-                 a=0;
-                 
+                     [new_landmark_return,ps_phmi_out] = fmincon(@(new_landmarks) calculate_phmi_pseudo(obj,im,params,estimator,new_landmarks),... 
+                         para_x0,para_A,para_b,para_Aeq,para_beq,para_lb,para_ub,...
+                         @(new_landmarks) constraints(obj,im,params,estimator,[estimator.x_true(1),estimator.x_true(2)],new_landmarks));
+                         %@(new_landmarks) constraint_in_detection_range(params,[estimator.x_true(1),estimator.x_true(2)],new_landmarks ) );
+                     if( (ps_phmi_out/1e8) <im.p_hmi)
+                         im.p_hmi = ps_phmi_out/1e8;
+                         estimator.n_k= obj.LMP_n_total;
+                         
+                         estimator.landmark_map = [estimator.landmark_map;new_landmark_return];
+                         break;
+                     end
+                 end           
               end
                  
              end
@@ -112,8 +124,8 @@ classdef LM_Proposal < handle
                              lmp_p_hmi_op= lmp_p_hmi_op + LMP_p_hmi_H * params.P_UA;
                          end
                      end
-                 end 
-          
+                 end
+                 lmp_p_hmi_op=lmp_p_hmi_op*1e8;
           end
           %----------------------------------------------------------------
           function A_aug = build_augmented_whiten_jacobian_A(obj,im,params,estimator,new_landmarks)
@@ -124,6 +136,7 @@ classdef LM_Proposal < handle
                  A_new = [zeros(size(new_landmarks,1)*params.m_F,size(A_old,2)-obj.m),obj.LMP_V*obj.LMP_H_k_new];
                  A_aug = [A_old;A_new];
           end
+          [cst,ceq] = constraints(obj,im,params,estimator,x_true,new_landmarks);
          end
         
 end

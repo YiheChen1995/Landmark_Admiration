@@ -1,5 +1,4 @@
-
-function [cst,ceq] = constraint_in_detection_range(params,x_true,x)
+function [cst,ceq] = constraint_not_on_road(params,x_true,x)
          if(size(x,1)==1 & size(x,2)==2)
              x = [x];
          end
@@ -10,8 +9,9 @@ function [cst,ceq] = constraint_in_detection_range(params,x_true,x)
              x_lm = x(i,:);
              px_lm = x_lm(1);
              py_lm = x_lm(2);
-             tmp_cst = sqrt((px_lm - px_true)^2+(py_lm-py_true)^2);
-             cst = [cst;tmp_cst-params.lidarRange];
+             
+             dx = px_lm - px_true;
+             dy = py_lm - py_true;
+                       
          end
-         ceq = [];
 end

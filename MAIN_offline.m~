@@ -4,13 +4,16 @@ dbstop if error
 
 addpath('utils/functions')
 addpath('utils/classes')
+addpath('utils/constraints/')
 addpath('data/')
+addpath('cut_road')
 
-test_new_landmarks = [7,10; 5,-23];
-for map_i= 10:10
+
+ 
+for map_i= 10:10 
     
 % seed the randomness
-rng(map_i)
+% rng(map_i)
     
 % create objects
 params= ParametersClass("simulation_fg_offline_SS");
@@ -21,7 +24,8 @@ counters= CountersClass([], [], params);
 
 % initialize time index
 epoch= 1;
-
+%---------------------------find_the_road_boundary----------------------
+CVX_road_boundary = cut_road(params.way_points,params.lidarRange);
 % ----------------------------------------------------------
 % -------------------------- LOOP --------------------------
 while ~estimator.goal_is_reached && epoch <= params.num_epochs_sim
@@ -50,11 +54,6 @@ while ~estimator.goal_is_reached && epoch <= params.num_epochs_sim
          counters.increase_integrity_monitoring_counter();
      end
      
-      %if (im.p_hmi<=1e-7)
-          lm_prop = LM_Proposal(im,params,estimator,test_new_landmarks);
-      end
-      
-    %end
     % -----------------------------------------
     % increase time
     counters.increase_time_sum_sim(params);
@@ -71,7 +70,7 @@ data_obj.delete_extra_allocated_memory(counters)
 
 
 % save workspace
-save(strcat( params.path_sim_fg, 'results/density_001/map_', num2str(map_i), '/offline' ));
+%save(strcat( params.path_sim_fg, 'results/density_001/map_', num2str(map_i), '/offline' ));
 
 end
 
