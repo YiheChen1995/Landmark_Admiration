@@ -9,6 +9,7 @@ classdef IntegrityMonitoringClassFgSimOffSS < handle
     end
     properties
         
+        modified_q = false;%this is a trigger determines if any were added
         p_hmi
         detector_threshold
         

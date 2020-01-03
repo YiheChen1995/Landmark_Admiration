@@ -43,9 +43,7 @@ classdef LM_Proposal < handle
                  p_phmi = calculate_phmi_pseudo(obj,im,params,estimator,obj.DBG_new_landmarks)
               else
                 %%  ---------under costruction------------
-                 cstn_num = 2 %%for construction variable
-                 CTRL_MAX_Landmarks = cstn_num
-                 for lm_i = 1:CTRL_MAX_Landmarks % try different landmark number until it reaches the max
+                 for lm_i = 1:obj.CTRL_MAX_Landmarks % try different landmark number until it reaches the max
                     % construct the initial condition
                      new_landmarks_0 = [];
                      for x0_i = 1:lm_i
@@ -64,13 +62,15 @@ classdef LM_Proposal < handle
 
                      [new_landmark_return,ps_phmi_out] = fmincon(@(new_landmarks) calculate_phmi_pseudo(obj,im,params,estimator,new_landmarks),... 
                          para_x0,para_A,para_b,para_Aeq,para_beq,para_lb,para_ub,...
-                         @(new_landmarks) constraints(obj,im,params,estimator,[estimator.x_true(1),estimator.x_true(2)],new_landmarks));
+                         @(new_landmarks) constraints(obj,im,params,estimator,[estimator.x_true(1),estimator.x_true(2),estimator.x_true(3)],new_landmarks));
                          %@(new_landmarks) constraint_in_detection_range(params,[estimator.x_true(1),estimator.x_true(2)],new_landmarks ) );
                      if( (ps_phmi_out/1e8) <im.p_hmi)
                          im.p_hmi = ps_phmi_out/1e8;
                          estimator.n_k= estimator.n_k + size(new_landmark_return,1)*params.m_F;
                          estimator.H_k= [estimator.H_k;obj.LMP_H_k_new];
                          estimator.landmark_map = [estimator.landmark_map;new_landmark_return];
+                         estimator.num_landmarks= size(estimator.landmark_map, 1);
+                         params.landmark_map = estimator.landmark_map;
                          im.A=obj.A_aug;
                          im.Gamma_fg= im.A' * im.A;
                          im.PX_M= inv(im.Gamma_fg);
@@ -81,7 +81,10 @@ classdef LM_Proposal < handle
                          estimator.n_L_M=im.n_L_M;
                          im.n_M=obj.LMP_n_M;
                          im.n_total=obj.LMP_n_total;
+                         im.modified_q = true;
                          break;
+                     else
+                         im.modified_q = false;
                      end
                  end           
               end

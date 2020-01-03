@@ -102,6 +102,8 @@ function monitor_integrity(obj, estimator, counters, data,  params)
                     obj.p_hmi_elapsed_time=toc;
                     %if (obj.p_hmi>1e-7)
                     %      lm_prop = LM_Proposal(obj,params,estimator, 0);
+                   % else
+                   %     obj.modified_q = false;
                     %end
                     % store integrity related data
                     data.store_integrity_data(obj, estimator, counters, params) 
