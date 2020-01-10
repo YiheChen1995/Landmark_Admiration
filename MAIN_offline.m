@@ -25,7 +25,7 @@ counters= CountersClass([], [], params);
 % initialize time index
 epoch= 1;
 %---------------------------find_the_road_boundary----------------------
-CVX_road_boundary = cut_road(params.way_points,params.lidarRange);
+%%CVX_road_boundary = cut_road(params.way_points,params.lidarRange);
 % ----------------------------------------------------------
 % -------------------------- LOOP --------------------------
 while ~estimator.goal_is_reached && epoch <= params.num_epochs_sim
